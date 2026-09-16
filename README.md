@@ -1,6 +1,5 @@
 # Shell
-
-[Description]
+OS shell with "fancy features" made in C by Matthew Chen, Kian Sweeney, and Tyler Dessault.
 
 ## Group Members
 - **Matthew Chen**: mc23c@fsu.edu
@@ -87,7 +86,7 @@ This will run the program ...
 ## Development Log
 - Set up starter files and README (Matthew Chen)
 
-### [Member 1]
+### [Matthew Chen]
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
@@ -95,7 +94,7 @@ This will run the program ...
 | YYYY-MM-DD | [Description of task]  |
 | YYYY-MM-DD | [Description of task]  |
 
-### [Member 2]
+### [Kian Sweeney]
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
@@ -104,7 +103,7 @@ This will run the program ...
 | YYYY-MM-DD | [Description of task]  |
 
 
-### [Member 3]
+### [Tyler Dessault]
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
