@@ -1,31 +1,8 @@
-#include "lexer.h"
+#include "../include/lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int main()
-{
-	while (1) {
-		printf("> ");
-
-		/* input contains the whole command
-		 * tokens contains substrings from input split by spaces
-		 */
-
-		char *input = get_input();
-		printf("whole input: %s\n", input);
-
-		tokenlist *tokens = get_tokens(input);
-		for (int i = 0; i < tokens->size; i++) {
-			printf("token %d: (%s)\n", i, tokens->items[i]);
-		}
-
-		free(input);
-		free_tokens(tokens);
-	}
-
-	return 0;
-}
 
 char *get_input(void) {
 	char *buffer = NULL;
@@ -69,15 +46,15 @@ void add_token(tokenlist *tokens, char *item) {
 	tokens->size += 1;
 }
 
-tokenlist *get_tokens(char *input) {
+tokenlist *get_tokens(char *input, char* delim) {
 	char *buf = (char *)malloc(strlen(input) + 1);
 	strcpy(buf, input);
 	tokenlist *tokens = new_tokenlist();
-	char *tok = strtok(buf, " ");
+	char *tok = strtok(buf, delim);
 	while (tok != NULL)
 	{
 		add_token(tokens, tok);
-		tok = strtok(NULL, " ");
+		tok = strtok(NULL, delim);
 	}
 	free(buf);
 	return tokens;
