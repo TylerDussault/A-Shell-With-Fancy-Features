@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include <stdlib.h>
+#include "lexer.h"
 
-int main(void);
-
-
+void expand_tilde(tokenlist *tokens);
