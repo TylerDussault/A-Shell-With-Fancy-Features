@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "shell.h"
 #include "lexer.h"
+#include "expand.h"
 
 int main()
 {
@@ -13,6 +14,9 @@ int main()
         // get input and tokenize
         char *input = get_input();
         tokenlist *tokens = get_tokens(input, " ");
+
+        // tilde expand
+        expand_tilde(tokens);
         
         // free memory
         free(input);
