@@ -117,8 +117,8 @@ Document in-person meetings, their purpose, and what was discussed.
 
 | Date       | Attendees            | Topics Discussed | Outcomes / Decisions |
 |------------|----------------------|------------------|-----------------------|
-| YYYY-MM-DD | [Names]              | [Agenda items]   | [Actions/Next steps]  |
-| YYYY-MM-DD | [Names]              | [Agenda items]   | [Actions/Next steps]  |
+| 2026-9-10 | Matthew, Kian, Tyler | Division of labor, first implementations  | Starting the project, setting up the repository, division of labor  |
+| 2026-09-17 | Matthew, Kian, Tyler | Updates, future plans, current implementation   | Other group members finish their parts |
 
 
 
