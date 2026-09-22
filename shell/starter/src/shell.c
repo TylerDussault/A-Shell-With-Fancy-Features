@@ -45,5 +45,5 @@ int main()
         free_tokens(tokens);
     }
 
-    return 0
+    return 0;
 }
