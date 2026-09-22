@@ -3,6 +3,7 @@
 #include "shell.h"
 #include "lexer.h"
 #include "expand.h"
+#include "redirect.h"
 
 int main()
 {
