@@ -29,9 +29,24 @@ void handle_redirection(tokenlist *tokens){
     }
 
     if(input_file != NULL){
-        // open input file, dup2, close
+        int fd = open(input_file, O_RDONLY);
+        // if error opening
+        if (fd == -1) {
+            perror("error opening file");
+            return;
+        }
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+        
     }
     if(output_file != NULL){
-        // open output file, dup2, close
+        int fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0600); // 0600 gives -rw------- permissions to output file
+        // if error opening
+        if (fd == -1) {
+            perror("error opening file");
+            return;
+        }
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
     }
 }
