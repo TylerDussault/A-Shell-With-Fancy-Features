@@ -6,6 +6,7 @@
 #include "redirect.h"
 #include "env.h"
 #include "execute.h"
+#include "pathsearch.h"
 
 int main()
 {

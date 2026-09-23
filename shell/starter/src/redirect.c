@@ -2,68 +2,42 @@
 #include <string.h> 
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdio.h>
 #include "redirect.h"
 
 void handle_redirection(tokenlist *tokens){    
     // loop through tokens for < or >
-    for(int i = 0; i < tokens->size; i++){
-        char *token = tokens->items[i];
-        
-        // cmd < file_in
+    for (int i = 0; i < tokens->size; i++)
+    {
         if (strcmp(tokens->items[i], "<") == 0)
         {
-            int fd = open(tokens->items[i + 1], O_RDONLY);
+            // open, dup2, close
 
-            // error opening file
-            if (fd == -1)
-            {
-                perror("open");
-                exit(1);
-            }
-
-            dup2(fd, STDIN_FILENO);
-            close(fd);
-
-            // remove < and filename
             free(tokens->items[i]);
             free(tokens->items[i + 1]);
 
-            for (int j = i; j < tokens->size - 2; j++){
+            for (int j = i; j < tokens->size - 1; j++)
                 tokens->items[j] = tokens->items[j + 2];
-            }
 
             tokens->size -= 2;
+            tokens->items[tokens->size] = NULL;
+
             i--;
         }
+        else if (strcmp(tokens->items[i], ">") == 0)
+        {
+            // open, dup2, close
 
-        // cmd > file_out
-        else if(strcmp(token,">") == 0){
-            int fd = open(tokens->items[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            
-            // error opening file
-            if (fd == -1)
-            {
-                perror("open");
-                exit(1);
-            }
-
-            dup2(fd, STDOUT_FILENO);
-            close(fd);
-
-            // remove > and filename
             free(tokens->items[i]);
             free(tokens->items[i + 1]);
 
-            for (int j = i; j < tokens->size - 2; j++){
+            for (int j = i; j < tokens->size - 1; j++)
                 tokens->items[j] = tokens->items[j + 2];
-            }
-                
+
             tokens->size -= 2;
+            tokens->items[tokens->size] = NULL;
+
             i--;
         }
-
-        // null terminate token for execv()
-        tokens->items[tokens->size] = NULL;
     }
-
 }

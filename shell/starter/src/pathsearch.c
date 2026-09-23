@@ -27,8 +27,9 @@ for (int i = 0; i < dirs->size; i++) //for each directory token list, look throu
 			}
 		
 		}
+		closedir(dir);
 	}
-closedir(dir);
+
 }
 if (found)
 	{
