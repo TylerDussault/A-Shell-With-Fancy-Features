@@ -21,7 +21,7 @@ for (int i = 0; i < dirs->size; i++) //for each directory token list, look throu
 				if (strcmp(file->d_name, command) == 0) //if we found it
 				{
 				found = true;
-				path = malloc(sizeof(char)*strlen(dirs->items[i]));
+				path = malloc(sizeof(char)* (strlen(dirs->items[i])+1));
 				strcpy(path,dirs->items[i]); //the path to the file
 				}
 			}
@@ -32,17 +32,20 @@ closedir(dir);
 }
 if (found)
 	{
-	char* temp = malloc(sizeof(char)*(strlen(path) +1));
-	strcpy(path, strcat(path,"/"));
-	free(temp);
-	temp = malloc(sizeof(char)*(strlen(path) + strlen(command)));	
-	strcpy(path, strcat(path,command)); //path is the directory command is in, these add the command to the full path
+	char* temp = malloc(sizeof(char)*(strlen(path) +2)); //to add the slash and the null terminator
+	strcpy(temp,path);
+	strncpy(temp+strlen(temp), "/", 2);//adds those 2 bytes
+	free(path);
+	path = malloc(sizeof(char)*(strlen(temp) + strlen(command) +1));	//now enough spacefor everything
+	strcpy(path, temp); //path is the directory command is in
+	strcat(path,command); //add the command
 	free(temp);
 	free_tokens(dirs);
 	return path;
 	}
 else
 	{
+	free_tokens(dirs);
 	return NULL;
 	}
 }

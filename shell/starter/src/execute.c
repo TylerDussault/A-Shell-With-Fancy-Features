@@ -2,15 +2,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
-
-
-bool execute(char* fname, char** args, int argc)
+bool execute(char* fname, char** args)
 {
-for (int i =0; i < argc; i++)
-	{
-	if (args[i] == NULL || args == NULL)
-		printf("BAAAD\n");
-	}
 pid_t pid = fork(); //clone process
 if (pid == -1) //coudlnt fork
 	return false;
