@@ -4,49 +4,66 @@
 #include <unistd.h>
 #include "redirect.h"
 
-void handle_redirection(tokenlist *tokens){
-    // storage for i/o files
-    char *input_file = NULL;
-    char *output_file = NULL;
-    
+void handle_redirection(tokenlist *tokens){    
     // loop through tokens for < or >
     for(int i = 0; i < tokens->size; i++){
         char *token = tokens->items[i];
         
         // cmd < file_in
-        if(strcmp(token,"<") == 0){
-            if(i + 1 < tokens->size){
-                input_file = tokens->items[i+1];
+        if (strcmp(tokens->items[i], "<") == 0)
+        {
+            int fd = open(tokens->items[i + 1], O_RDONLY);
+
+            // error opening file
+            if (fd == -1)
+            {
+                perror("open");
+                exit(1);
             }
+
+            dup2(fd, STDIN_FILENO);
+            close(fd);
+
+            // remove < and filename
+            free(tokens->items[i]);
+            free(tokens->items[i + 1]);
+
+            for (int j = i; j < tokens->size - 2; j++){
+                tokens->items[j] = tokens->items[j + 2];
+            }
+
+            tokens->size -= 2;
+            i--;
         }
 
         // cmd > file_out
         else if(strcmp(token,">") == 0){
-            if(i + 1 < tokens->size){
-                output_file = tokens->items[i+1];
+            int fd = open(tokens->items[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            
+            // error opening file
+            if (fd == -1)
+            {
+                perror("open");
+                exit(1);
             }
+
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+
+            // remove > and filename
+            free(tokens->items[i]);
+            free(tokens->items[i + 1]);
+
+            for (int j = i; j < tokens->size - 2; j++){
+                tokens->items[j] = tokens->items[j + 2];
+            }
+                
+            tokens->size -= 2;
+            i--;
         }
+
+        // null terminate token for execv()
+        tokens->items[tokens->size] = NULL;
     }
 
-    if(input_file != NULL){
-        int fd = open(input_file, O_RDONLY);
-        // if error opening
-        if (fd == -1) {
-            perror("error opening file");
-            return;
-        }
-        dup2(fd, STDIN_FILENO);
-        close(fd);
-        
-    }
-    if(output_file != NULL){
-        int fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0600); // 0600 gives -rw------- permissions to output file
-        // if error opening
-        if (fd == -1) {
-            perror("error opening file");
-            return;
-        }
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-    }
 }

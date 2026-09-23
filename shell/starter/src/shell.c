@@ -4,6 +4,8 @@
 #include "lexer.h"
 #include "expand.h"
 #include "redirect.h"
+#include "env.h"
+#include "execute.h"
 
 int main()
 {
@@ -35,7 +37,7 @@ int main()
         else {
             // tokens->items is already NULL-terminated,
             // so it can be used as argv for execv()
-            execute(fname, tokens->items, tokens->size);
+            execute(fname, tokens);
 
             free(fname);
         }

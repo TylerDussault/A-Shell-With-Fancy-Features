@@ -1,20 +1,30 @@
-#include "../include/execute.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include "execute.h"
 #include <sys/wait.h>
-bool execute(char* fname, char** args)
+
+bool execute(char *fname, tokenlist *tokens)
 {
-pid_t pid = fork(); //clone process
-if (pid == -1) //coudlnt fork
-	return false;
-else if (pid == 0) //this is the child
-	{
-		if(execv(fname, args) == -1) //couldnt execute
-			return false;
-		
-	}
-else	//we are the parent
-	waitpid(pid, NULL, 0); //wait for child to end, no settings
-//child is done
-return true;
+    pid_t pid = fork(); // new process
+
+    if (pid == -1) // can't fork
+        return false;
+
+    else if (pid == 0) // child process
+    {
+        handle_redirection(tokens);
+
+        execv(fname, tokens->items);
+
+        perror("execv");
+        exit(1);
+    }
+
+    else // parent
+    {
+        waitpid(pid, NULL, 0);
+    }
+
+    return true;
 }

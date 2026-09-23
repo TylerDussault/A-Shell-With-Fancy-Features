@@ -1,3 +1,5 @@
 #pragma once
 
-bool execute(char* fname, char** args); //executes the executable with the name reffered too by filename filename
+#include "lexer.h"
+
+bool execute(char *fname, tokenlist *tokens); //executes the executable with the name reffered too by filename filename
