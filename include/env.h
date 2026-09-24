@@ -1,3 +1,8 @@
 #pragma once
-
-char* replace_env(char* s); //takes in a string, returns a copy that replaces any occurances of an env variable with its value, you must free the return eventually 
+ 
+#include "lexer.h"
+ 
+//replaces every token of the form $NAME with the value of that env var.
+//an unset variable expands to nothing, so its token is removed (like bash)
+void expand_env(tokenlist *tokens);
+ 

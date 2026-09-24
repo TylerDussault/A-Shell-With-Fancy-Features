@@ -38,8 +38,9 @@ int main()
         }
         tokenlist *tokens = get_tokens(input, " \t");
  
-        // tilde expand
+        // tilde expand, then environment variable expand
         expand_tilde(tokens);
+        expand_env(tokens);
  
         // if empty input
         if (tokens->size == 0) {
