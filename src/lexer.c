@@ -2,14 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
+ 
+ 
 char *get_input(void) {
 	char *buffer = NULL;
 	int bufsize = 0;
+	bool got_data = false; /* did fgets return anything at all? */
 	char line[5];
 	while (fgets(line, 5, stdin) != NULL)
 	{
+		got_data = true;
 		int addby = 0;
 		char *newln = strchr(line, '\n');
 		if (newln != NULL)
@@ -22,11 +24,13 @@ char *get_input(void) {
 		if (newln != NULL)
 			break;
 	}
+	if (!got_data) /* EOF (Ctrl-D) with nothing typed */
+		return NULL;
 	buffer = (char *)realloc(buffer, bufsize + 1);
 	buffer[bufsize] = 0;
 	return buffer;
 }
-
+ 
 tokenlist *new_tokenlist(void) {
 	tokenlist *tokens = (tokenlist *)malloc(sizeof(tokenlist));
 	tokens->size = 0;
@@ -34,18 +38,18 @@ tokenlist *new_tokenlist(void) {
 	tokens->items[0] = NULL; /* make NULL terminated */
 	return tokens;
 }
-
+ 
 void add_token(tokenlist *tokens, char *item) {
 	int i = tokens->size;
-
+ 
 	tokens->items = (char **)realloc(tokens->items, (i + 2) * sizeof(char *));
 	tokens->items[i] = (char *)malloc(strlen(item) + 1);
 	tokens->items[i + 1] = NULL;
 	strcpy(tokens->items[i], item);
-
+ 
 	tokens->size += 1;
 }
-
+ 
 tokenlist *get_tokens(char *input, char* delim) {
 	char *buf = (char *)malloc(strlen(input) + 1);
 	strcpy(buf, input);
@@ -59,7 +63,7 @@ tokenlist *get_tokens(char *input, char* delim) {
 	free(buf);
 	return tokens;
 }
-
+ 
 void free_tokens(tokenlist *tokens) {
 	for (int i = 0; i < tokens->size; i++)
 		free(tokens->items[i]);
