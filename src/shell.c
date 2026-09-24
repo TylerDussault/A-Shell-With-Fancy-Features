@@ -8,12 +8,27 @@
 #include "execute.h"
 #include "pathsearch.h"
  
+/* returns the env var's value, or a placeholder if it is unset */
+static const char *env_or(const char *name, const char *fallback)
+{
+    const char *val = getenv(name);
+    return (val != NULL) ? val : fallback;
+}
+ 
+/* prints USER@MACHINE:PWD> */
+static void print_prompt(void)
+{
+    printf("%s@%s:%s>", env_or("USER", "user"), env_or("MACHINE", "machine"),
+           env_or("PWD", "?"));
+    fflush(stdout); /* no newline in the prompt, so force it out before reading input */
+}
+ 
 int main()
 {
     // REPL (read eval print loop)
     while (1) {
         // print prompt
-        printf("%s@%s:%s>", getenv("USER"), getenv("MACHINE"), getenv("PWD"));
+        print_prompt();
  
         // get input and tokenize
         char *input = get_input();
