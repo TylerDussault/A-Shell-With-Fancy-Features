@@ -161,7 +161,7 @@ This will run the program ...
 | YYYY-MM-DD | [Description of task]  |
 
 
-### [Tyler Dessault]
+### [Tyler Dussault]
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
