@@ -1,6 +1,9 @@
 #pragma once
-
+ 
 #include "lexer.h"
-
-char *find_path(char *command); //finds the path of the command passed through the argument by searhcing through all the directories in $PATH, returns the path to it, returns null if it cant find it, 
-				//must free return eventually
+ 
+// Returns the full path of the executable to run for "command", or NULL if there isn't one.
+//  - a command containing a '/' is used as the path itself (no search)
+//  - otherwise the directories in $PATH are searched in order and the first match wins
+// The returned string is malloc'd, so the caller must free it.
+char *find_path(char *command);

@@ -1,54 +1,54 @@
-#include "../include/pathsearch.h"
-#include <dirent.h>
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-char* find_path(char* command) //finds the path of the command passed through the argument by searhcing through all the directories in $PATH, returns the path to it, returns null if it cant find it
+#include <unistd.h>
+#include <sys/stat.h>
+#include "pathsearch.h"
+ 
+// is "path" an existing regular file that we are allowed to execute?
+static bool is_executable(const char *path)
 {
-bool found = false; //have we found it yet?
-char* path; //the path to return
-tokenlist* dirs = get_tokens(getenv("PATH"), ":"); //get a list of directories but spliting them up into tokens from the PATH env var using a colon as the delimeter
-
-for (int i = 0; i < dirs->size; i++) //for each directory token list, look through all of them
-{
-	DIR* dir;
-	if ((dir = opendir(dirs->items[i])) != NULL) //open the directory
-	{
-		struct dirent* file;					
-		while ((file = readdir(dir)) != NULL) //for each file in the directory
-		{
-			if (file != NULL)
-			{
-				if (strcmp(file->d_name, command) == 0) //if we found it
-				{
-				found = true;
-				path = malloc(sizeof(char)* (strlen(dirs->items[i])+1));
-				strcpy(path,dirs->items[i]); //the path to the file
-				}
-			}
-		
-		}
-		closedir(dir);
-	}
-
+    struct stat st;
+    return stat(path, &st) == 0 && S_ISREG(st.st_mode) && access(path, X_OK) == 0;
 }
-if (found)
-	{
-	char* temp = malloc(sizeof(char)*(strlen(path) +2)); //to add the slash and the null terminator
-	strcpy(temp,path);
-	strncpy(temp+strlen(temp), "/", 2);//adds those 2 bytes
-	free(path);
-	path = malloc(sizeof(char)*(strlen(temp) + strlen(command) +1));	//now enough spacefor everything
-	strcpy(path, temp); //path is the directory command is in
-	strcat(path,command); //add the command
-	free(temp);
-	free_tokens(dirs);
-	return path;
-	}
-else
-	{
-	free_tokens(dirs);
-	return NULL;
-	}
+ 
+char *find_path(char *command)
+{
+    // a command with a slash already is a path, so there is nothing to search
+    if (strchr(command, '/') != NULL)
+    {
+        if (!is_executable(command))
+            return NULL;
+ 
+        char *copy = malloc(strlen(command) + 1);
+        strcpy(copy, command);
+        return copy;
+    }
+ 
+    char *path_env = getenv("PATH");
+    if (path_env == NULL)
+        return NULL;
+ 
+    // split $PATH into its directories (delimited by colons)
+    tokenlist *dirs = get_tokens(path_env, ":");
+    char *result = NULL;
+ 
+    // try each directory in order and stop at the first executable match
+    for (size_t i = 0; i < dirs->size && result == NULL; i++)
+    {
+        // room for directory + "/" + command + '\0'
+        char *candidate = malloc(strlen(dirs->items[i]) + strlen(command) + 2);
+        strcpy(candidate, dirs->items[i]);
+        strcat(candidate, "/");
+        strcat(candidate, command);
+ 
+        if (is_executable(candidate))
+            result = candidate;
+        else
+            free(candidate);
+    }
+ 
+    free_tokens(dirs);
+    return result;
 }
 
 
