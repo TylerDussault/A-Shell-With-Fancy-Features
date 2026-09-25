@@ -1,5 +1,5 @@
 # Shell
-OS shell with "fancy features" made in C by Matthew Chen, Kian Sweeney, and Tyler Dessault.
+OS shell with "fancy features" made in C by Matthew Chen, Kian Sweeney, and Tyler Dussault.
 
 ## Group Members
 - **Matthew Chen**: mc23c@fsu.edu
@@ -180,6 +180,7 @@ Document in-person meetings, their purpose, and what was discussed.
 
 
 ## Bugs
+No current bugs are known.
 
 ## Extra Credit
 All three extra credit opportunities were completed:
