@@ -11,6 +11,8 @@
 #include "pathsearch.h"
 #include "pipeline.h"
 #include "jobs.h"
+#include "builtins.h"
+#include "history.h"
  
 /* returns the env var's value, or a placeholder if it is unset */
 static const char *env_or(const char *name, const char *fallback)
@@ -27,31 +29,55 @@ static void print_prompt(void)
     fflush(stdout); /* no newline in the prompt, so force it out before reading input */
 }
  
-/* Returns a malloc'd copy of `input` with trailing whitespace, and (if
- * present) a trailing '&' plus any whitespace before it, stripped off.
- * This is the text shown in a background job's "[n]+ done ..." message. */
-static char *strip_trailing_amp(const char *input)
+/* Returns a malloc'd copy of `s` with trailing whitespace stripped. Used
+ * both as the history entry for a command, and as the starting point for
+ * stripping a trailing '&' off of it. */
+static char *trim_trailing_ws(const char *s)
 {
-    size_t len = strlen(input);
- 
-    while (len > 0 && isspace((unsigned char)input[len - 1]))
+    size_t len = strlen(s);
+    while (len > 0 && isspace((unsigned char)s[len - 1]))
         len--;
- 
-    if (len > 0 && input[len - 1] == '&')
-    {
-        len--;
-        while (len > 0 && isspace((unsigned char)input[len - 1]))
-            len--;
-    }
  
     char *out = malloc(len + 1);
-    memcpy(out, input, len);
+    memcpy(out, s, len);
+    out[len] = '\0';
+    return out;
+}
+ 
+/* Given a whitespace-trimmed line that is known to end in '&', returns a
+ * malloc'd copy with that '&' (and any whitespace before it) removed. This
+ * is the text shown in a background job's "[n]+ done ..." message. */
+static char *strip_trailing_amp(const char *trimmed)
+{
+    size_t len = strlen(trimmed);
+    len--; // drop the '&' itself
+ 
+    while (len > 0 && isspace((unsigned char)trimmed[len - 1]))
+        len--;
+ 
+    char *out = malloc(len + 1);
+    memcpy(out, trimmed, len);
     out[len] = '\0';
     return out;
 }
  
 int main()
 {
+    // Unbuffer stdin. Without this, glibc's stdio pulls a large chunk of
+    // stdin into an internal buffer on the first read, well beyond what
+    // get_input() has actually consumed so far. That's invisible for
+    // normal execution, but it breaks "shell-ception" (running this shell
+    // recursively from within itself, sharing the same stdin): once a
+    // command is forked+exec'd into a *new* copy of this shell, the child
+    // starts with a fresh stdio buffer, but the kernel's read position on
+    // stdin has already been advanced past data the parent silently
+    // pre-buffered -- so the child finds nothing left to read, and the
+    // parent ends up consuming the rest of the input itself instead. An
+    // unbuffered stdin guarantees a read() only ever consumes exactly what
+    // this process has actually processed, so a nested instance picks up
+    // cleanly wherever the parent left off.
+    setvbuf(stdin, NULL, _IONBF, 0);
+ 
     // REPL (read eval print loop)
     while (1) {
         // reap any background jobs that finished since the last prompt
@@ -66,11 +92,16 @@ int main()
             printf("\n");
             break;
         }
+ 
+        // the full line as typed (minus trailing whitespace), used for
+        // this command's history entry
+        char *trimmed = trim_trailing_ws(input);
+ 
         tokenlist *tokens = get_tokens(input, " \t");
  
         // "cmd ... &" -> run in the background. Strip the trailing "&"
         // token (it must not end up in argv) and remember the trimmed
-        // original command line for this job's eventual "done" message.
+        // command line for this job's eventual "done" message.
         bool background = false;
         char *cmdline = NULL;
         if (tokens->size > 0 && strcmp(tokens->items[tokens->size - 1], "&") == 0)
@@ -79,7 +110,7 @@ int main()
             free(tokens->items[tokens->size - 1]);
             tokens->items[tokens->size - 1] = NULL;
             tokens->size--;
-            cmdline = strip_trailing_amp(input);
+            cmdline = strip_trailing_amp(trimmed);
         }
  
         // tilde expand, then environment variable expand
@@ -89,14 +120,33 @@ int main()
         // if empty input (or input was just "&")
         if (tokens->size == 0) {
             free(cmdline);
+            free(trimmed);
             free(input);
             free_tokens(tokens);
             continue;
         }
  
-        if (is_pipeline(tokens)) {
+        if (is_builtin(tokens->items[0])) {
+            // "exit" itself isn't logged as a valid command -- it reports
+            // what ran *before* it, so recording it here would be circular
+            if (strcmp(tokens->items[0], "exit") != 0)
+                history_add(trimmed);
+ 
+            bool should_exit = false;
+            run_builtin(tokens, &should_exit);
+ 
+            if (should_exit) {
+                free(cmdline);
+                free(trimmed);
+                free(input);
+                free_tokens(tokens);
+                break;
+            }
+        }
+        else if (is_pipeline(tokens)) {
             // one or more "|" separators: run every stage as a pipeline
-            execute_pipeline(tokens, background, cmdline);
+            if (execute_pipeline(tokens, background, cmdline))
+                history_add(trimmed);
         }
         else {
             // find command in PATH
@@ -106,6 +156,8 @@ int main()
                 printf("Command not found: %s\n", tokens->items[0]);
             }
             else {
+                history_add(trimmed);
+ 
                 // tokens->items is already NULL-terminated,
                 // so it can be used as argv for execv()
                 if (!execute(fname, tokens, background, cmdline))
@@ -115,9 +167,9 @@ int main()
             }
         }
  
- 
         // free memory
         free(cmdline);
+        free(trimmed);
         free(input);
         free_tokens(tokens);
     }
