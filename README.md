@@ -147,10 +147,10 @@ This will run the program ...
 ### [Matthew Chen]
 
 | Date       | Work Completed / Notes |
-|------------|------------------------|
-| YYYY-MM-DD | [Description of task]  |
-| YYYY-MM-DD | [Description of task]  |
-| YYYY-MM-DD | [Description of task]  |
+|------------|------------------------| 
+| 2026-9-25 | Extra Credit: support piping + I/O redirection in 1 command  |
+| 2026-9-22 | I/O redirection, debug  |
+| 2026-9-18 | shell.c, prompt, and tilde expansion |
 
 ### [Kian Sweeney]
 
@@ -175,7 +175,7 @@ Document in-person meetings, their purpose, and what was discussed.
 |------------|----------------------|------------------|-----------------------|
 | 2026-9-10 | Matthew, Kian, Tyler | Division of labor, first implementations  | Starting the project, setting up the repository, division of labor  |
 | 2026-09-17 | Matthew, Kian, Tyler | Updates, future plans, current implementation   | Other group members finish their parts |
-
+| 2026-09-17 | Matthew, Kian, Tyler | End of project, labor + debugging, extra credit   | Finish all parts, start work on extra credit, labor for debugging |
 
 
 ## Bugs
