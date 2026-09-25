@@ -6,6 +6,7 @@
 #include "pipeline.h"
 #include "pathsearch.h"
 #include "redirect.h"
+#include "jobs.h"
  
 bool is_pipeline(tokenlist *tokens)
 {
@@ -56,7 +57,7 @@ static void free_stages(tokenlist **stages, size_t count)
     free(stages);
 }
  
-bool execute_pipeline(tokenlist *tokens)
+bool execute_pipeline(tokenlist *tokens, bool background, const char *cmdline)
 {
     size_t n;
     tokenlist **stages = split_stages(tokens, &n);
@@ -160,10 +161,29 @@ bool execute_pipeline(tokenlist *tokens)
         close(pipes[i][1]);
     }
  
-    // wait for every stage to finish
-    for (size_t i = 0; i < n; i++)
-        if (pids[i] != -1)
-            waitpid(pids[i], NULL, 0);
+    if (background)
+    {
+        // register the whole pipeline as ONE job. Only successfully-forked
+        // pids are tracked; the pid shown to the user is the last one of
+        // those, which per spec is normally cmd(last)'s pid.
+        pid_t *valid_pids = malloc(n * sizeof(pid_t));
+        size_t valid_count = 0;
+        for (size_t i = 0; i < n; i++)
+            if (pids[i] != -1)
+                valid_pids[valid_count++] = pids[i];
+ 
+        if (valid_count > 0)
+            add_job(valid_pids, (int)valid_count, cmdline);
+ 
+        free(valid_pids);
+    }
+    else
+    {
+        // wait for every stage to finish
+        for (size_t i = 0; i < n; i++)
+            if (pids[i] != -1)
+                waitpid(pids[i], NULL, 0);
+    }
  
     free(pids);
     free(pipes);
