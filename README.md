@@ -3,7 +3,7 @@ OS shell with "fancy features" made in C by Matthew Chen, Kian Sweeney, and Tyle
 
 ## Group Members
 - **Matthew Chen**: mc23c@fsu.edu
-- **Kian Sweeney**: 
+- **Kian Sweeney**: kms24b@fsu.edu
 - **Tyler Dussault**: tjd22@fsu.edu
 ## Division of Labor
 
