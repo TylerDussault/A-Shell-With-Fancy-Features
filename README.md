@@ -114,10 +114,29 @@ Format:
 shell/
 │
 ├── src/
-│ ├── main.c
+│ ├── builtins.c
+| ├── env.c
+| ├── execute.c
+| ├── expand.c
+| ├── history.c
+| ├── jobs.c
+| ├── lexer.c
+| ├── pathsearch.c
+| ├── pipeline.c
+| ├── redirect.c
 │ └── shell.c
 │
 ├── include/
+│ ├── builtins.h
+| ├── env.h
+| ├── execute.h
+| ├── expand.h
+| ├── history.h
+| ├── jobs.h
+| ├── lexer.h
+| ├── pathsearch.h
+| ├── pipeline.h
+| ├── redirect.h
 │ └── shell.h
 │
 ├── README.md
