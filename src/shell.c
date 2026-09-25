@@ -58,7 +58,8 @@ int main()
         else {
             // tokens->items is already NULL-terminated,
             // so it can be used as argv for execv()
-            execute(fname, tokens);
+            if (!execute(fname, tokens))
+                printf("Error: failed to run %s\n", tokens->items[0]);
  
             free(fname);
         }
