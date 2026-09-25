@@ -156,9 +156,8 @@ This will run the program ...
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
-| YYYY-MM-DD | [Description of task]  |
-| YYYY-MM-DD | [Description of task]  |
-| YYYY-MM-DD | [Description of task]  |
+| 2026-09-17 | Completed part 4 and 5 |
+| 2026-09-23 | Completed part 2, fixed bugs on part 4 and removed debugging code on part 5 |
 
 
 ### [Tyler Dussault]
@@ -186,4 +185,4 @@ No current bugs are known.
 All three extra credit opportunities were completed:
 - Support unlimited number of pipes
 - Support piping and I/O redirection in a single command
-- Shell-ception: Execute your shell from within a running shell process repeatedly
+- Shell-ception: Execute your shell from within a running shell process repeatedly: Completed by Kian Sweeney
