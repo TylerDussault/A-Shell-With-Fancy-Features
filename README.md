@@ -148,7 +148,6 @@ This will run the program ...
 
 | Date       | Work Completed / Notes |
 |------------|------------------------| 
-| 2026-9-25 | Extra Credit: support piping + I/O redirection in 1 command  |
 | 2026-9-22 | I/O redirection, debug  |
 | 2026-9-18 | shell.c, prompt, and tilde expansion |
 
