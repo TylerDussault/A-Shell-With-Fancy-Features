@@ -7,6 +7,7 @@
 #include "env.h"
 #include "execute.h"
 #include "pathsearch.h"
+#include "pipeline.h"
  
 /* returns the env var's value, or a placeholder if it is unset */
 static const char *env_or(const char *name, const char *fallback)
@@ -48,20 +49,26 @@ int main()
             free_tokens(tokens);
             continue;
         }
-        
-        // find command in PATH
-        char *fname = find_path(tokens->items[0]);
  
-        if (fname == NULL) {
-            printf("Command not found: %s\n", tokens->items[0]);
+        if (is_pipeline(tokens)) {
+            // one or more "|" separators: run every stage as a pipeline
+            execute_pipeline(tokens);
         }
         else {
-            // tokens->items is already NULL-terminated,
-            // so it can be used as argv for execv()
-            if (!execute(fname, tokens))
-                printf("Error: failed to run %s\n", tokens->items[0]);
+            // find command in PATH
+            char *fname = find_path(tokens->items[0]);
  
-            free(fname);
+            if (fname == NULL) {
+                printf("Command not found: %s\n", tokens->items[0]);
+            }
+            else {
+                // tokens->items is already NULL-terminated,
+                // so it can be used as argv for execv()
+                if (!execute(fname, tokens))
+                    printf("Error: failed to run %s\n", tokens->items[0]);
+ 
+                free(fname);
+            }
         }
  
  
