@@ -4,7 +4,7 @@ OS shell with "fancy features" made in C by Matthew Chen, Kian Sweeney, and Tyle
 ## Group Members
 - **Matthew Chen**: mc23c@fsu.edu
 - **Kian Sweeney**: 
-- **Tyler Dussault**: 
+- **Tyler Dussault**: tjd22@fsu.edu
 ## Division of Labor
 
 ### Part 1: Prompt
@@ -105,10 +105,6 @@ Format:
 [Job number]+ [CMD's PID] [CMD's command line]
 - **Assigned to**: Tyler Dussault
 
-### Part 10: External Timeout Executable
-- **Responsibilities**: [Description]
-- **Assigned to**: Alex Brown, Jane Smith
-
 ### Extra Credit
 - **Responsibilities**: [Description]
 - **Assigned to**: Kian Sweeney, Matthew Chen, Tyler Dussault
@@ -169,9 +165,8 @@ This will run the program ...
 
 | Date       | Work Completed / Notes |
 |------------|------------------------|
-| YYYY-MM-DD | [Description of task]  |
-| YYYY-MM-DD | [Description of task]  |
-| YYYY-MM-DD | [Description of task]  |
+| 2026-09-23 | Bug testing for parts 1-6  |
+| 2026-09-25 | Completed parts 7, 8, and 9  |
 
 
 ## Meetings
@@ -185,14 +180,9 @@ Document in-person meetings, their purpose, and what was discussed.
 
 
 ## Bugs
-- **Bug 1**: This is bug 1.
-- **Bug 2**: This is bug 2.
-- **Bug 3**: This is bug 3.
 
 ## Extra Credit
-- **Extra Credit 1**: Kian Sweeney
-- **Extra Credit 2**: Matthew Chen
-- **Extra Credit 3**: Tyler Dussault
-
-## Considerations
-[Description]
+All three extra credit opportunities were completed:
+- Support unlimited number of pipes
+- Support piping and I/O redirection in a single command
+- Shell-ception: Execute your shell from within a running shell process repeatedly
